@@ -1,10 +1,6 @@
 package split;
 
-import org.kohsuke.args4j.CmdLineException;
-
 import java.io.File;
-
-import static java.lang.System.exit;
 
 public class ParamsSplit {
 
@@ -12,7 +8,7 @@ public class ParamsSplit {
         lines, chars, files
     }
 
-    private static final String BASE_NAME_OUTPUT_FILE = "x";
+    static final String BASE_NAME_OUTPUT_FILE = "x";
 
     private String inputFileName;
     private String baseOutputFileName;
@@ -27,6 +23,9 @@ public class ParamsSplit {
         ParamsCLI params = new ParamsCLI(args);
 
         inputFileName = params.getInputFile();
+        if (inputFileName.endsWith(".txt")) {
+            inputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".txt"));
+        }
 
         if (params.getOutputFile() == null) {
             baseOutputFileName = BASE_NAME_OUTPUT_FILE;
@@ -38,6 +37,10 @@ public class ParamsSplit {
 
         namingOutputByDigits = params.isNamingOutputByDigits();
 
+        if (params.isBasedDiv()) {
+            return;
+        }
+
         int lines = params.getDivByLines();
         int chars = params.getDivByChars();
         int files = params.getCountFiles();
@@ -46,13 +49,8 @@ public class ParamsSplit {
             throw new IllegalArgumentException("Must be used -l, -n or -c with number > 0");
         }
 
-        if (lines < 0 || files < 0 || files < 0) {
+        if (lines < 0 || chars < 0 || files < 0) {
             throw new IllegalArgumentException("Count div elements must be > 0");
-        }
-
-
-        if (inputFileName.endsWith(".txt")) {
-            inputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".txt"));
         }
 
         if (lines != 0) {

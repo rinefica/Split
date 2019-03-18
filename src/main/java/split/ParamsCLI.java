@@ -8,7 +8,7 @@ import org.kohsuke.args4j.Option;
 public class ParamsCLI {
 
     @Option(name = "-o", usage = "Set output file name")
-    private String outputFile;
+    private String outputFile = ParamsSplit.BASE_NAME_OUTPUT_FILE;
 
     @Option(name = "-d")
     private boolean namingOutputByDigits;
@@ -22,8 +22,10 @@ public class ParamsCLI {
     @Option(name = "-n", forbids = {"-c", "-l"})
     private int countFiles;
 
-    @Argument(required = true)
+    @Argument(required = true, metaVar = "name input file")
     private String inputFile;
+
+    private boolean isBasedDiv; //true when don't used l, c, n
 
     public boolean isNamingOutputByDigits() {
         return namingOutputByDigits;
@@ -49,27 +51,39 @@ public class ParamsCLI {
         return countFiles;
     }
 
-    public ParamsCLI(String outputFile, boolean namingOutputByDigits,
-                     int divByLines, int divByChars, int countFiles, String inputFile) {
+    public boolean isBasedDiv() {
+        return isBasedDiv;
+    }
+
+    public ParamsCLI(String outputFile, boolean namingOutputByDigits, int divByLines,
+                     int divByChars, int countFiles, String inputFile, boolean isBasedDiv) {
         this.outputFile = outputFile;
         this.namingOutputByDigits = namingOutputByDigits;
         this.divByLines = divByLines;
         this.divByChars = divByChars;
         this.countFiles = countFiles;
         this.inputFile = inputFile;
+        this.isBasedDiv = isBasedDiv;
     }
 
+
+
     public ParamsCLI(String[] args){
-        /*for (String arg: args)
-            System.out.println(arg.toString());*/
-        CmdLineParser parser = new CmdLineParser(this);
 
         try {
+            CmdLineParser parser = new CmdLineParser(this);
             parser.parseArgument(args);
         } catch (CmdLineException e) {
             System.out.println(e.getMessage());
         }
 
+        isBasedDiv = true;
+        for (String option : args) {
+            if (option.equals("-l") || option.equals("-c") || option.equals("-n")) {
+                isBasedDiv = false;
+                break;
+            }
+        }
 
     }
 
@@ -99,6 +113,7 @@ public class ParamsCLI {
                 ", divByLines=" + divByLines +
                 ", divByChars=" + divByChars +
                 ", countFiles=" + countFiles +
+                ", isBasedDiv=" + isBasedDiv +
                 ", inputFile='" + inputFile + '\'' +
                 '}';
     }
