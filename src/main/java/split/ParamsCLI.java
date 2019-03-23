@@ -5,6 +5,11 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+/**
+ * @author rinefica
+ * @version 1
+ */
+
 public class ParamsCLI {
 
     @Option(name = "-o", usage = "Set output file name")

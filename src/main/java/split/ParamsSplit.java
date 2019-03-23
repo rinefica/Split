@@ -18,19 +18,10 @@ public class ParamsSplit {
     private String inputFileName;
     private static String baseOutputFileName;
 
-
     private DivFilesBy divElement = DivFilesBy.lines;
     private int countDivElements = 100;
 
     private static boolean namingOutputByDigits;
-
-    public static void setNamingOutputByDigits(boolean namingOutputByDigits) {
-        ParamsSplit.namingOutputByDigits = namingOutputByDigits;
-    }
-
-    public static void setBaseOutputFileName(String baseOutputFileName) {
-        ParamsSplit.baseOutputFileName = baseOutputFileName;
-    }
 
     public ParamsSplit(String inputFileName, String baseOutputFileName,
                        DivFilesBy divElement, int countDivElements, boolean namingOutputByDigits) {
@@ -125,7 +116,7 @@ public class ParamsSplit {
             throw new SplitArgumentException(SplitArgumentException.FILE_COUNT_LESS_701);
 
         if (!(new File(inputFileName).exists()))
-            throw new SplitArgumentException(SplitArgumentException.FILE_NOT_EXIST + " " + inputFileName);
+            throw new SplitArgumentException(SplitArgumentException.FILE_NOT_EXIST);
     }
 
 
@@ -141,6 +132,13 @@ public class ParamsSplit {
         return countDivElements;
     }
 
+    public static void setNamingOutputByDigits(boolean namingOutputByDigits) {
+        ParamsSplit.namingOutputByDigits = namingOutputByDigits;
+    }
+
+    public static void setBaseOutputFileName(String baseOutputFileName) {
+        ParamsSplit.baseOutputFileName = baseOutputFileName;
+    }
     @Override
     public String toString() {
 

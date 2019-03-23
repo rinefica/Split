@@ -175,7 +175,7 @@ public class Split {
             Split split = new Split(args);
             split.writeFiles();
         } catch (CmdLineException | SplitArgumentException e) {
-            System.out.println(e.getMessage());
+            System.out.print(e.getMessage());
         }
 
     }

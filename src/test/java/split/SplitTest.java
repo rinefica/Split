@@ -1,12 +1,15 @@
 package split;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 
 import com.google.common.io.Files;
+import split.exceptions.SplitArgumentException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SplitTest {
@@ -15,6 +18,7 @@ class SplitTest {
 
     private void startWithLines() {
         try {
+            new File("src/test/files").mkdir();
             input = new File("src/test/files/123.txt");
             writer = new BufferedWriter(new FileWriter(input));
             for (String s : lines) {
@@ -29,6 +33,7 @@ class SplitTest {
     }
     private void startWithText() {
         try {
+            new File("src/test/files").mkdir();
             input = new File("src/test/files/123.txt");
             writer = new BufferedWriter(new FileWriter(input));
             writer.write(text);
@@ -38,11 +43,50 @@ class SplitTest {
         }
 
     }
-    
-
 
     private String[] lines = {"meow", "Hello!", "A vot"};
     private String text = "meow\nHello!\nA vot tak\nSmth important";
+
+    @Test
+    void testExceptions() {
+        ByteArrayOutputStream newOut = new ByteArrayOutputStream();
+
+        PrintStream console = System.out;
+        PrintStream ps = new PrintStream(newOut);
+        System.setOut(ps);
+
+        Split.main("-o out -c 5".split(" "));
+        System.out.flush();
+        assertEquals("Argument \"name input file\" is required", newOut.toString());
+        newOut.reset();
+
+        Split.main("-o - -d 123.txt -l 2 -n 5".split(" "));
+        System.out.flush();
+        assertEquals("option \"-n\" cannot be used with the option(s) [-c, -l]", newOut.toString());
+        newOut.reset();
+
+        Split.main("345.txt".split(" "));
+        System.out.flush();
+        assertEquals(SplitArgumentException.FILE_NOT_EXIST, newOut.toString());
+        newOut.reset();
+
+        Split.main("-o - -d 123.txt -l 0".split(" "));
+        System.out.flush();
+        assertEquals(SplitArgumentException.USE_POS_OPT, newOut.toString());
+        newOut.reset();
+
+        Split.main("-o - -d 123.txt -n 703".split(" "));
+        System.out.flush();
+        assertEquals(SplitArgumentException.FILE_COUNT_LESS_701, newOut.toString());
+        newOut.reset();
+
+        Split.main("-o - -d 123.txt -l -5".split(" "));
+        System.out.flush();
+        assertEquals(SplitArgumentException.USE_POS_COUNT, newOut.toString());
+        newOut.reset();
+
+        System.setOut(console);
+    }
 
     @Test
     void testL() {
@@ -168,9 +212,9 @@ class SplitTest {
     }
 
     @AfterEach
-    void cleanDirFiles() {
+    void SplitTest() {
         try {
-            Files.deleteDirectoryContents(new File("src/test/files/"));
+            FileUtils.deleteDirectory(new File("src/test/files/"));
         } catch (IOException e) {
             e.printStackTrace();
         }
