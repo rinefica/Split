@@ -55,13 +55,15 @@ public class Split {
             for (int i = 0 ; i < countFiles; i++) {
                 File output = new File(nameOutputFile[i]);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
-                reader.read(curData);
-                writer.write(curData);
+                if (reader.read(curData) > 0) {
+                    writer.write(curData);
+                }
                 writer.close();
             }
 
             if (lastFileSize != 0){
-                File output = new File(ParamsSplit.createNameOutputByNumber(countFiles));
+                File output = new File(
+                    ParamsSplit.createNameOutputByNumber(countFiles) + ParamsSplit.BASE_FORMAT);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
                 curData = new char[lastFileSize];
                 reader.read(curData);
@@ -78,9 +80,14 @@ public class Split {
         try {
             int countFiles = params.getCountDivElements();
             int curLength = (int) (inputFile.length() / countFiles);
-            System.out.println((int) (inputFile.length() / countFiles));
+            int lastFileSize = (int) (inputFile.length() % countFiles);
 
-            writeFiles(reader, countFiles, curLength, (int)(inputFile.length() % countFiles));
+            if (countFiles > inputFile.length()) {
+                curLength = 1;
+                lastFileSize = 0;
+            }
+
+            writeFiles(reader, countFiles, curLength, lastFileSize);
 
         } catch (Exception e) {
             e.printStackTrace();
