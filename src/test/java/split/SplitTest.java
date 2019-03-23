@@ -1,17 +1,12 @@
 package split;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class SplitTest {
 
-    @BeforeAll
-    void start() {
-    }
+    @Test
+    void main() {
+        Split.main("-d -l 1 -o - src/test/files/123.txt".split(" "));
 
-    @AfterAll
-    void tearDown() {
     }
 }

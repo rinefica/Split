@@ -39,7 +39,7 @@ import java.io.*;
 
 public class Split {
 
-    ParamsSplit params;
+    private ParamsSplit params;
 
     public Split(String[] args) throws CmdLineException, SplitArgumentException {
         params = new ParamsSplit(args);
@@ -49,7 +49,7 @@ public class Split {
     private void writeFiles(BufferedReader reader, int countFiles, int curLength,
                             int lastFileSize) {
         try {
-            String[] nameOutputFile = params.createNamesOutputFiles(countFiles);
+            String[] nameOutputFile = ParamsSplit.createNamesOutputFiles(countFiles);
             char[] curData = new char[curLength];
 
             for (int i = 0 ; i < countFiles; i++) {
@@ -61,7 +61,7 @@ public class Split {
             }
 
             if (lastFileSize != 0){
-                File output = new File(params.createNameOutputByNumber(countFiles));
+                File output = new File(ParamsSplit.createNameOutputByNumber(countFiles));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
                 curData = new char[lastFileSize];
                 reader.read(curData);
@@ -110,7 +110,7 @@ public class Split {
             while (!endWriting) {
                 writeDataInFile = false;
 
-                File output = new File(params.createNameOutputByNumber(curNumberFile));
+                File output = new File(ParamsSplit.createNameOutputByNumber(curNumberFile) + ParamsSplit.BASE_FORMAT);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
 
                 for (int i = 0; i < linesPerFile &&

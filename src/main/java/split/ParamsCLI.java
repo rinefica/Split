@@ -68,14 +68,9 @@ public class ParamsCLI {
 
 
 
-    public ParamsCLI(String[] args){
-
-        try {
-            CmdLineParser parser = new CmdLineParser(this);
-            parser.parseArgument(args);
-        } catch (CmdLineException e) {
-            System.out.println(e.getMessage());
-        }
+    public ParamsCLI(String[] args) throws CmdLineException {
+        CmdLineParser parser = new CmdLineParser(this);
+        parser.parseArgument(args);
 
         isBasedDiv = true;
         for (String option : args) {
@@ -94,9 +89,13 @@ public class ParamsCLI {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-        if (obj.getClass() != this.getClass())
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
+        }
 
         ParamsCLI params = (ParamsCLI) obj;
         return (outputFile.equals(params.outputFile)) && (inputFile.equals(params.inputFile)) &&
