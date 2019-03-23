@@ -85,6 +85,19 @@ class SplitTest {
         assertEquals(SplitArgumentException.USE_POS_COUNT, newOut.toString());
         newOut.reset();
 
+        File fileEmpty = new File("src/test/files/empty.txt");
+        try {
+            new File("src/test/files").mkdir();
+            fileEmpty.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Split.main("src/test/files/empty.txt".split(" "));
+        System.out.flush();
+        assertEquals(SplitArgumentException.FILE_IS_EMPTY, newOut.toString());
+        newOut.reset();
+
         System.setOut(console);
     }
 

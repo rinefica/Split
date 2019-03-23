@@ -8,6 +8,31 @@ import org.kohsuke.args4j.Option;
 /**
  * @author rinefica
  * @version 1
+ *
+ * Класс, получающий значения из терминального вызова. Проверки на корректность записи вызова.
+ *
+ * Поля:
+ *      <b>String</b> inputFile
+ *              имя файла, который нужно считать;
+ *
+ *      <b>String</b> outputFile
+ *              базовое имя для выходного файла;
+ *
+ *      <b>boolean</b> namingOutputByDigits
+ *              true - именование файлов при помощи цифр, false - именование при помощи буквенной последовательности
+ *
+ *      <b>int</b> divByLines
+ *              число строк для одного файла (если задействован аргумент -l)
+ *
+ *      <b>int</b> divByChars
+ *              число символов для одного файла (если задействован аргумент -c)
+ *
+ *      <b>int</b> countFiles
+ *              выходное число файлов (если задействован аргумент -n)
+ *
+ *      <b>boolean</b> isBasedDiv
+ *              true - файл делится по умолчанию (100 строк), false - правило деления файла задано
+ *
  */
 
 public class ParamsCLI {
@@ -30,7 +55,7 @@ public class ParamsCLI {
     @Argument(required = true, metaVar = "name input file")
     private String inputFile;
 
-    private boolean isBasedDiv; //true when don't used l, c, n
+    private boolean isBasedDiv;
 
     public boolean isNamingOutputByDigits() {
         return namingOutputByDigits;

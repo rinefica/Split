@@ -6,6 +6,42 @@ import split.exceptions.SplitArgumentException;
 import java.io.File;
 import java.util.Objects;
 
+/**
+ * @author rinefica
+ * @version 1
+ *
+ * Класс, преобразующий значения из {@link ParamsCLI} в логически необходимые для {@link Split}.
+ * Проверки {@link SplitArgumentException} на корректность введенной задачи (существующий непустой входной файл,
+ * неотрицательные значения деления файла).
+ *
+ * Поля:
+ *      <b>String</b> BASE_NAME_OUTPUT_FILE
+ *                      базовое имя выходного файла по умолчанию ("x")
+ *
+ *      <b>String</b> BASE_FORMAT
+ *                      формат файлов (.txt по умолчанию)
+ *
+ *      <b>String</b> inputFileName
+ *                      имя входного файла
+ *
+ *      <b>String</b> baseOutputFileName
+ *                      базовое имя выходного файла
+ *
+ *      <b>DivFilesBy</b> divElement
+ *                      по какому базису происходит деление: lines, chars, files - строки, символы, файлы,
+ *                      по умолчанию - строки
+ *
+ *      <b>int</b> countDivElements
+ *                      количество элементов (символов или строк) на один файл или общее количество файлов,
+ *                      по умолчанию - 100
+ *
+ *      <b>boolean</b> namingOutputByDigits
+ *                      правило наименования выходных файлов,
+ *                      при true - с помощью цифр, false - букв (от 'aa' до 'zz')
+ *
+ *
+ */
+
 public class ParamsSplit {
 
     public enum DivFilesBy {
@@ -23,6 +59,15 @@ public class ParamsSplit {
 
     private static boolean namingOutputByDigits;
 
+    /**
+     * Конструктор для ручного создания (необходим для тестирования)
+     *
+     * @param inputFileName входной файл
+     * @param baseOutputFileName выходной файл
+     * @param divElement элемент деления
+     * @param countDivElements количество элементов деления
+     * @param namingOutputByDigits наименование выходных файлов с числами
+     */
     public ParamsSplit(String inputFileName, String baseOutputFileName,
                        DivFilesBy divElement, int countDivElements, boolean namingOutputByDigits) {
         this.inputFileName = inputFileName;
@@ -32,6 +77,13 @@ public class ParamsSplit {
         this.namingOutputByDigits = namingOutputByDigits;
     }
 
+
+    /**
+     * Конструктор
+     * @param args - аргументы командной строки
+     * @throws CmdLineException - ошибки ввода команды
+     * @throws SplitArgumentException - логические ошибки команды
+     */
     public ParamsSplit(String[] args) throws CmdLineException, SplitArgumentException {
         ParamsCLI params = new ParamsCLI(args);
 
@@ -80,6 +132,11 @@ public class ParamsSplit {
 
     }
 
+    /**
+     * Перевести из числа в буквенное обозначение (0 - 'aa', 1 - 'ab' etc)
+     * @param i - число для преобразования в буквенную комбинацию
+     * @return строка из соответствующих букв латинского алфавита
+     */
     static String toLettersName(int i) {
         char first = (char)('a' + i / 27);
         char second = (char)('a' + i % 27);
@@ -87,6 +144,11 @@ public class ParamsSplit {
         return "" + first + second;
     }
 
+    /**
+     * Создать имя выходного файла
+     * @param number номер файла
+     * @return имя
+     */
     static String createNameOutputByNumber(int number) {
         if (namingOutputByDigits) {
             return baseOutputFileName + number;
@@ -95,6 +157,11 @@ public class ParamsSplit {
         }
     }
 
+    /**
+     * Создать массив из имен выходных файлов
+     * @param countOutputFiles количество файлов
+     * @return массив имен
+     */
     public static String[] createNamesOutputFiles(int countOutputFiles) {
         String[] names = new String[countOutputFiles];
 
@@ -111,12 +178,21 @@ public class ParamsSplit {
         return names;
     }
 
+    /**
+     * Проверка на корректность: входной файл не существует, пуст или
+     *  количество выходных файлов больше возможного для поддержки при буквенном именовании
+     * @throws SplitArgumentException
+     */
     public void isCorrectCommand() throws SplitArgumentException {
         if (divElement.equals(DivFilesBy.files) && countDivElements > 26*27 - 1)
             throw new SplitArgumentException(SplitArgumentException.FILE_COUNT_LESS_701);
 
-        if (!(new File(inputFileName).exists()))
+        File input = new File(inputFileName);
+        if (!(input.exists()))
             throw new SplitArgumentException(SplitArgumentException.FILE_NOT_EXIST);
+
+        if (input.length() == 0)
+            throw new SplitArgumentException(SplitArgumentException.FILE_IS_EMPTY);
     }
 
 

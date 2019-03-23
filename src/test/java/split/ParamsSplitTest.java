@@ -10,25 +10,22 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParamsSplitTest {
-    String i1 = "-o - -d 123.txt -l 2";
-    String i2 =  "-o out 123.txt -c 5";
-    String i3 =  "-n 4 123.txt";
 
     @Test
     public void testCreate() throws CmdLineException, SplitArgumentException {
-        ParamsSplit params = new ParamsSplit(i1.split(" "));
-        ParamsSplit paramsAuto = new ParamsSplit("123", "123",
+        ParamsSplit params = new ParamsSplit("-o - -d 123.txt -l 2".split(" "));
+        ParamsSplit paramsAuto = new ParamsSplit("123.txt", "123",
                     ParamsSplit.DivFilesBy.lines, 2, true);
 
         assertEquals(paramsAuto, params);
 
-        params = new ParamsSplit(i2.split(" "));
-        paramsAuto = new ParamsSplit("123", "out",
+        params = new ParamsSplit("-o out 123.txt -c 5".split(" "));
+        paramsAuto = new ParamsSplit("123.txt", "out",
             ParamsSplit.DivFilesBy.chars, 5, false);
         assertEquals(paramsAuto, params);
 
-        params = new ParamsSplit(i3.split(" "));
-        paramsAuto = new ParamsSplit("123", ParamsSplit.BASE_NAME_OUTPUT_FILE,
+        params = new ParamsSplit("-n 4 123.txt".split(" "));
+        paramsAuto = new ParamsSplit("123.txt", ParamsSplit.BASE_NAME_OUTPUT_FILE,
             ParamsSplit.DivFilesBy.files, 4, false);
         assertEquals(paramsAuto, params);
     }

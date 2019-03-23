@@ -9,43 +9,34 @@ import java.io.*;
  * @author rinefica
  * @version 1
  *
- * Поля:    <b>String</b> inputFileName
- *                  имя файла, который нужно считать
+ * Класс, разделяющий входной файл на выходные по заданным правилам
  *
- *          <b>String</b> outputFileName
- *                  базовое имя для выходных файлов, по умолчанию <i>"x"</i>
+ * Поля:
  *
- *          <b>boolean</b> useConstNumberOfFiles
- *                  если <b>true</b>, должно быть задано количество выходных файлов
- *                  (размер каждого выходного файла высчитывается автоматически),
- *                  по умолчанию <b>false</b>
- *
- *          <b>int</b> countConstNumberOfFiles
- *                  высчитывается автоматически, если useConstNumberOfFiles <b>true</b>,
- *                  иначе не задействуется
- *
- *          <b>boolean</b> useDivByLines
- *                  если <b>true</b>, деление на выходные файлы происходит по количеству строк,
- *                  если <b>false</b>, деление на выходные файлы происходит по количеству символов
- *
- *          <b>int</b> numberDivElements
- *                  количество элементов, по которому происходит деление на файлы,
- *                  <i>100</i> по умолчанию для строк
- *
- *          <b></b>
- *
- * Методы:
  */
 
 public class Split {
 
     private ParamsSplit params;
 
+    /**
+     * Конструктор
+     * @param args
+     * @throws CmdLineException при нарушении правил записи команды
+     * @throws SplitArgumentException при логическом нарушении команды
+     */
     public Split(String[] args) throws CmdLineException, SplitArgumentException {
         params = new ParamsSplit(args);
         params.isCorrectCommand();
     }
 
+    /**
+     * Непосредственная запись для правил деления по количеству символов\файлов
+     * @param reader обертка для чтения из входного файла
+     * @param countFiles количество полных выходных файлов
+     * @param curLength длина каждого выходного файла в символах
+     * @param lastFileSize размер последнего файла при делении файлов не нацело
+     */
     private void writeFiles(BufferedReader reader, int countFiles, int curLength,
                             int lastFileSize) {
         try {
@@ -76,6 +67,11 @@ public class Split {
         }
     }
 
+    /**
+     * Подготовка к записи по правилу количества файлов
+     * @param inputFile наименование входного файла
+     * @param reader обертка для чтения из входного файла
+     */
     private void writeByCountFiles(File inputFile, BufferedReader reader){
         try {
             int countFiles = params.getCountDivElements();
@@ -94,6 +90,11 @@ public class Split {
         }
     }
 
+    /**
+     * Подготовка к записи по правилу количества символов
+     * @param inputFile наименование входного файла
+     * @param reader обертка для чтения из входного файла
+     */
     private void writeByChars(File inputFile, BufferedReader reader){
         try {
             int curLength = params.getCountDivElements();
@@ -106,6 +107,10 @@ public class Split {
         }
     }
 
+    /**
+     * Запись по количеству строк в каждом выходном файле. Непосредственная запись.
+     * @param reader обертка для чтения из входного файла
+     */
     private void writeByLines(BufferedReader reader) {
         try {
             int linesPerFile = params.getCountDivElements();
@@ -117,7 +122,8 @@ public class Split {
             while (!endWriting) {
                 writeDataInFile = false;
 
-                File output = new File(ParamsSplit.createNameOutputByNumber(curNumberFile) + ParamsSplit.BASE_FORMAT);
+                File output = new File(
+                    ParamsSplit.createNameOutputByNumber(curNumberFile) + ParamsSplit.BASE_FORMAT);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
 
                 for (int i = 0; i < linesPerFile &&
@@ -144,6 +150,11 @@ public class Split {
         }
     }
 
+    /**
+     * Запись файлов: чтение входного файла и вызов функции для соответстующего элемента деления
+     * @throws SplitArgumentException если правила некорректны (отрицательные параметры,
+     *  пустой\несуществующий входной файл)
+     */
     public void writeFiles() throws SplitArgumentException {
 
         params.isCorrectCommand();
@@ -170,6 +181,10 @@ public class Split {
         }
     }
 
+    /**
+     * Точка входа в программу
+     * @param args - параметры для деления файла
+     */
     public static void main(String[] args) {
         try {
             Split split = new Split(args);
