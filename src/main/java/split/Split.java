@@ -1,5 +1,8 @@
 package split;
 
+import org.kohsuke.args4j.CmdLineException;
+import split.exceptions.SplitArgumentException;
+
 import java.io.*;
 
 /**
@@ -38,8 +41,9 @@ public class Split {
 
     ParamsSplit params;
 
-    public Split(String[] args) {
+    public Split(String[] args) throws CmdLineException, SplitArgumentException {
         params = new ParamsSplit(args);
+        params.isCorrectCommand();
     }
 
     private void writeFiles(BufferedReader reader, int countFiles, int curLength,
@@ -133,7 +137,7 @@ public class Split {
         }
     }
 
-    public void writeFiles() {
+    public void writeFiles() throws SplitArgumentException {
 
         params.isCorrectCommand();
 
@@ -160,9 +164,12 @@ public class Split {
     }
 
     public static void main(String[] args) {
-        Split split = new Split(args);
-
-        split.writeFiles();
+        try {
+            Split split = new Split(args);
+            split.writeFiles();
+        } catch (CmdLineException | SplitArgumentException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
