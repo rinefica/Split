@@ -48,12 +48,12 @@ public class ParamsSplit {
         lines, chars, files
     }
 
-    static class BASE_INFO{
+    static class BASE_INFO {
         static final String BASE_NAME_OUTPUT_FILE = "x";
         static final String BASE_FORMAT = ".txt";
     }
 
-    private String inputFileName;
+    private static String inputFileName;
     private static String baseOutputFileName = BASE_INFO.BASE_NAME_OUTPUT_FILE;
 
     private DivFilesBy divElement = DivFilesBy.lines;
