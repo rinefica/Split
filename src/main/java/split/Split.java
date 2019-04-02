@@ -11,12 +11,12 @@ import java.io.*;
  *
  * Класс, разделяющий входной файл на выходные по заданным правилам
  *
- * Поля:
  *
  */
 
 public class Split {
 
+    private static String endOfLine = System.getProperty("line.separator");
     private ParamsSplit params;
 
     /**
@@ -37,7 +37,7 @@ public class Split {
      * @param curLength длина каждого выходного файла в символах
      * @param lastFileSize размер последнего файла при делении файлов не нацело
      */
-    private void writeFiles(BufferedReader reader, int countFiles, int curLength,
+    private static void writeFiles(BufferedReader reader, int countFiles, int curLength,
                             int lastFileSize) {
         try {
             String[] nameOutputFile = ParamsSplit.createNamesOutputFiles(countFiles);
@@ -54,7 +54,7 @@ public class Split {
 
             if (lastFileSize != 0){
                 File output = new File(
-                    ParamsSplit.createNameOutputByNumber(countFiles) + ParamsSplit.BASE_FORMAT);
+                    ParamsSplit.createNameOutputByNumber(countFiles) + ParamsSplit.BASE_INFO.BASE_FORMAT);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
                 curData = new char[lastFileSize];
                 reader.read(curData);
@@ -63,7 +63,7 @@ public class Split {
             }
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.print(e.getMessage());
         }
     }
 
@@ -83,10 +83,15 @@ public class Split {
                 lastFileSize = 0;
             }
 
+            if (lastFileSize != 0) {
+                countFiles--;
+                lastFileSize += curLength;
+            }
+
             writeFiles(reader, countFiles, curLength, lastFileSize);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.print(e.getMessage());
         }
     }
 
@@ -103,7 +108,7 @@ public class Split {
             writeFiles(reader, countFiles, curLength, (int)(inputFile.length() % curLength));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.print(e.getMessage());
         }
     }
 
@@ -123,12 +128,12 @@ public class Split {
                 writeDataInFile = false;
 
                 File output = new File(
-                    ParamsSplit.createNameOutputByNumber(curNumberFile) + ParamsSplit.BASE_FORMAT);
+                    ParamsSplit.createNameOutputByNumber(curNumberFile) + ParamsSplit.BASE_INFO.BASE_FORMAT);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(output));
 
                 for (int i = 0; i < linesPerFile &&
                         ((curData = reader.readLine()) != null); i++) {
-                    writer.append(curData).append('\n');
+                    writer.append(curData).append(endOfLine);
                     writeDataInFile = true;
                 }
 
@@ -146,7 +151,7 @@ public class Split {
             reader.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.print(e.getMessage());
         }
     }
 
@@ -160,25 +165,25 @@ public class Split {
         params.isCorrectCommand();
 
         File inputFile = new File(params.getInputFileName());
-        BufferedReader reader = null;
 
-        try {
-            reader = new BufferedReader(new FileReader(inputFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        try (
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile))
+        ) {
+            if (params.getDivElement() == ParamsSplit.DivFilesBy.files) {
+                writeByCountFiles(inputFile, reader);
+            }
+
+            if (params.getDivElement() == ParamsSplit.DivFilesBy.chars) {
+                writeByChars(inputFile, reader);
+            }
+
+            if (params.getDivElement() == ParamsSplit.DivFilesBy.lines) {
+                writeByLines(reader);
+            }
+        } catch (IOException e) {
+            System.err.print(e.getMessage());
         }
 
-        if (params.getDivElement() == ParamsSplit.DivFilesBy.files) {
-            writeByCountFiles(inputFile, reader);
-        }
-
-        if (params.getDivElement() == ParamsSplit.DivFilesBy.chars) {
-            writeByChars(inputFile, reader);
-        }
-
-        if (params.getDivElement() == ParamsSplit.DivFilesBy.lines) {
-            writeByLines(reader);
-        }
     }
 
     /**
@@ -190,7 +195,7 @@ public class Split {
             Split split = new Split(args);
             split.writeFiles();
         } catch (CmdLineException | SplitArgumentException e) {
-            System.out.print(e.getMessage());
+            System.err.print(e.getMessage());
         }
 
     }

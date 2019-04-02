@@ -2,6 +2,7 @@ package split;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -16,11 +17,19 @@ class SplitTest {
     private File input;
     private BufferedWriter writer;
 
+    @BeforeEach
+    private void start() {
+        new File("src/test/files").mkdir();
+        input = new File("src/test/files/123.txt");
+        try {
+            writer = new BufferedWriter(new FileWriter(input));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void startWithLines() {
         try {
-            new File("src/test/files").mkdir();
-            input = new File("src/test/files/123.txt");
-            writer = new BufferedWriter(new FileWriter(input));
             for (String s : lines) {
                 writer.write(s);
                 writer.newLine();
@@ -33,9 +42,6 @@ class SplitTest {
     }
     private void startWithText() {
         try {
-            new File("src/test/files").mkdir();
-            input = new File("src/test/files/123.txt");
-            writer = new BufferedWriter(new FileWriter(input));
             writer.write(text);
             writer.close();
         } catch (IOException e) {
@@ -51,9 +57,9 @@ class SplitTest {
     void testExceptions() {
         ByteArrayOutputStream newOut = new ByteArrayOutputStream();
 
-        PrintStream console = System.out;
+        PrintStream console = System.err;
         PrintStream ps = new PrintStream(newOut);
-        System.setOut(ps);
+        System.setErr(ps);
 
         Split.main("-o out -c 5".split(" "));
         System.out.flush();
@@ -98,7 +104,7 @@ class SplitTest {
         assertEquals(SplitArgumentException.FILE_IS_EMPTY, newOut.toString());
         newOut.reset();
 
-        System.setOut(console);
+        System.setErr(console);
     }
 
     @Test

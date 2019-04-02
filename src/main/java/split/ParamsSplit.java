@@ -48,11 +48,13 @@ public class ParamsSplit {
         lines, chars, files
     }
 
-    static final String BASE_NAME_OUTPUT_FILE = "x";
-    static final String BASE_FORMAT = ".txt";
+    static class BASE_INFO{
+        static final String BASE_NAME_OUTPUT_FILE = "x";
+        static final String BASE_FORMAT = ".txt";
+    }
 
     private String inputFileName;
-    private static String baseOutputFileName;
+    private static String baseOutputFileName = BASE_INFO.BASE_NAME_OUTPUT_FILE;
 
     private DivFilesBy divElement = DivFilesBy.lines;
     private int countDivElements = 100;
@@ -92,9 +94,7 @@ public class ParamsSplit {
             inputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".txt"));
         }
 
-        if (params.getOutputFile() == null) {
-            baseOutputFileName = BASE_NAME_OUTPUT_FILE;
-        } else if (params.getOutputFile().equals("-")) {
+        if (params.getOutputFile().equals("-")) {
             baseOutputFileName = inputFileName;
         } else {
             baseOutputFileName = params.getOutputFile();
@@ -138,8 +138,8 @@ public class ParamsSplit {
      * @return строка из соответствующих букв латинского алфавита
      */
     static String toLettersName(int i) {
-        char first = (char)('a' + i / 27);
-        char second = (char)('a' + i % 27);
+        char first = (char)('a' + i / 26);
+        char second = (char)('a' + i % 26);
 
         return "" + first + second;
     }
@@ -167,11 +167,11 @@ public class ParamsSplit {
 
         if (namingOutputByDigits) {
             for (int i = 0; i < countOutputFiles; i++) {
-                names[i] = baseOutputFileName + i + BASE_FORMAT;
+                names[i] = baseOutputFileName + i + BASE_INFO.BASE_FORMAT;
             }
         } else {
             for (int i = 0; i < countOutputFiles; i++) {
-                names[i] = baseOutputFileName + toLettersName(i) + BASE_FORMAT;
+                names[i] = baseOutputFileName + toLettersName(i) + BASE_INFO.BASE_FORMAT;
             }
         }
 
@@ -184,7 +184,7 @@ public class ParamsSplit {
      * @throws SplitArgumentException
      */
     public void isCorrectCommand() throws SplitArgumentException {
-        if (divElement.equals(DivFilesBy.files) && countDivElements > 26*27 - 1)
+        if (countDivElements > 26*26 - 1)
             throw new SplitArgumentException(SplitArgumentException.FILE_COUNT_LESS_701);
 
         File input = new File(inputFileName);

@@ -38,7 +38,7 @@ import org.kohsuke.args4j.Option;
 public class ParamsCLI {
 
     @Option(name = "-o", usage = "Set output file name")
-    private String outputFile = ParamsSplit.BASE_NAME_OUTPUT_FILE;
+    private String outputFile = ParamsSplit.BASE_INFO.BASE_NAME_OUTPUT_FILE;
 
     @Option(name = "-d")
     private boolean namingOutputByDigits;

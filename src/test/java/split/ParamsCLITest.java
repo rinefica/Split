@@ -18,7 +18,7 @@ class ParamsCLITest {
         assertEquals(params, paramsAuto);
 
         paramsAuto = new ParamsCLI("123.txt".split(" "));
-        params = new ParamsCLI(ParamsSplit.BASE_NAME_OUTPUT_FILE, false,
+        params = new ParamsCLI(ParamsSplit.BASE_INFO.BASE_NAME_OUTPUT_FILE, false,
                 0, 0, 0, input, true);
         assertEquals(params, paramsAuto);
 

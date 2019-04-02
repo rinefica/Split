@@ -25,7 +25,7 @@ class ParamsSplitTest {
         assertEquals(paramsAuto, params);
 
         params = new ParamsSplit("-n 4 123.txt".split(" "));
-        paramsAuto = new ParamsSplit("123.txt", ParamsSplit.BASE_NAME_OUTPUT_FILE,
+        paramsAuto = new ParamsSplit("123.txt", ParamsSplit.BASE_INFO.BASE_NAME_OUTPUT_FILE,
             ParamsSplit.DivFilesBy.files, 4, false);
         assertEquals(paramsAuto, params);
     }
@@ -53,8 +53,8 @@ class ParamsSplitTest {
     void toLettersName() {
         assertEquals("aa", ParamsSplit.toLettersName(0));
         assertEquals("ab", ParamsSplit.toLettersName(1));
-        assertEquals("ba", ParamsSplit.toLettersName(27));
-        assertEquals("zz", ParamsSplit.toLettersName(700));
+        assertEquals("ba", ParamsSplit.toLettersName(26));
+        assertEquals("zz", ParamsSplit.toLettersName(675));
     }
 
     @Test
@@ -83,14 +83,14 @@ class ParamsSplitTest {
         String[] answer = new String[4];
 
         for (int i = 0; i < 4; i++) {
-            answer[i] = outputBaseName + i + ParamsSplit.BASE_FORMAT;
+            answer[i] = outputBaseName + i + ParamsSplit.BASE_INFO.BASE_FORMAT;
         }
         ParamsSplit.setNamingOutputByDigits(true);
         assertLinesMatch(new ArrayList<>(Arrays.asList(answer)),
             new ArrayList<>(Arrays.asList(ParamsSplit.createNamesOutputFiles(4))));
 
         for (int i = 0; i < 4; i++) {
-            answer[i] = outputBaseName + ParamsSplit.toLettersName(i) + ParamsSplit.BASE_FORMAT;
+            answer[i] = outputBaseName + ParamsSplit.toLettersName(i) + ParamsSplit.BASE_INFO.BASE_FORMAT;
         }
         ParamsSplit.setNamingOutputByDigits(false);
         assertLinesMatch(new ArrayList<>(Arrays.asList(answer)),
