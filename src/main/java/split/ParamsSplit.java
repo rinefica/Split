@@ -56,8 +56,8 @@ public class ParamsSplit {
     private static String inputFileName;
     private static String baseOutputFileName = BASE_INFO.BASE_NAME_OUTPUT_FILE;
 
-    private DivFilesBy divElement = DivFilesBy.lines;
-    private int countDivElements = 100;
+    private static DivFilesBy divElement = DivFilesBy.lines;
+    private static int countDivElements = 100;
 
     private static boolean namingOutputByDigits;
 
@@ -183,7 +183,7 @@ public class ParamsSplit {
      *  количество выходных файлов больше возможного для поддержки при буквенном именовании
      * @throws SplitArgumentException
      */
-    public void isCorrectCommand() throws SplitArgumentException {
+    public static void isCorrectCommand() throws SplitArgumentException {
         if (countDivElements > 26*26 - 1)
             throw new SplitArgumentException(SplitArgumentException.FILE_COUNT_LESS_701);
 
@@ -238,16 +238,11 @@ public class ParamsSplit {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ParamsSplit that = (ParamsSplit) o;
-        return countDivElements == that.countDivElements &&
-            Objects.equals(inputFileName, that.inputFileName) &&
-            divElement == that.divElement;
+
+        return true;
     }
 
     @Override
